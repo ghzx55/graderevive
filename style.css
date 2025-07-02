@@ -1,0 +1,149 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eef1f5; /* Light bluish-gray background */
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+h1 {
+    color: #2c3e50; /* Dark blue-gray */
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2em;
+}
+
+h2 {
+    color: #34495e; /* Slightly lighter blue-gray */
+    text-align: left;
+    border-bottom: 2px solid #3498db; /* Accent color blue */
+    padding-bottom: 8px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+}
+
+section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #fdfdfd;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+button {
+    display: inline-block; /* Changed from block for better flow with text */
+    margin: 15px 5px 15px 0; /* Adjusted margin */
+    padding: 12px 20px;
+    background-color: #3498db; /* Primary button blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+button:disabled {
+    background-color: #bdc3c7; /* Gray for disabled */
+    cursor: not-allowed;
+}
+
+#course-list-for-major div,
+#retake-course-selector-container div,
+#premium-retake-course-selector-container #premium-selectors-go-here div {
+    margin-bottom: 12px;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+}
+
+#course-list-for-major label,
+#retake-course-selector-container label,
+#premium-retake-course-selector-container label { /* Though premium doesn't use labels currently */
+    margin-left: 8px;
+    font-size: 0.95em;
+}
+
+select, input[type="text"] {
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    font-size: 0.9em;
+}
+
+select {
+    min-width: 200px; /* Give select some base width */
+}
+
+input[type="text"] {
+    width: 120px; /* Fixed width for grade input */
+}
+
+
+span#overallGpa, span#majorGpa, span#retakeOverallGpa, span#retakeMajorGpa {
+    font-weight: bold;
+    color: #27ae60; /* Green for GPA values */
+    font-size: 1.1em;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+/* Specific section styling */
+#file-upload-section p, #major-selection-section p, #retake-simulation-section p, #premium-feature-section p {
+    font-style: italic;
+    color: #555;
+}
+
+#results-section p {
+    font-size: 1.1em;
+}
+
+#premium-feature-section #simulatePaymentButton {
+    background-color: #e67e22; /* Orange for premium button */
+}
+#premium-feature-section #simulatePaymentButton:hover {
+    background-color: #d35400; /* Darker orange */
+}
+#premium-feature-section #simulatePaymentButton:disabled {
+    background-color: #f39c12; /* Lighter orange when active */
+    color: #fff;
+    opacity: 0.8;
+}
+
+
+/* Initial display states - managed by JS but good for no-JS fallback or initial load */
+#major-selection-section,
+#results-section,
+#retake-simulation-section,
+#premium-feature-section,
+#premium-retake-course-selector-container {
+    /* display: none; -- JS handles this, but CSS can be a fallback */
+}
