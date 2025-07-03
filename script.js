@@ -3,16 +3,24 @@ let allCourses = [];
 // Global variable to store indices of selected major courses
 let majorCourseIndices = [];
 
-// Grade to point mapping
+feat/gpa-calculator-premium
+// Grade to point mapping - updated to include FA
 const gradePoints = {
-    'A+': 4.5, 'A': 4.5, 'A0': 4.0, // Some schools treat A+ and A as 4.5, others A+ as 4.3 or A0 as 4.0. Assuming A+ & A as 4.5, A0 as 4.0
+    'A+': 4.5, 'A': 4.5, 'A0': 4.0,
+
     'B+': 3.5, 'B': 3.5, 'B0': 3.0,
     'C+': 2.5, 'C': 2.5, 'C0': 2.0,
     'D+': 1.5, 'D': 1.5, 'D0': 1.0,
     'F': 0.0,
+feat/gpa-calculator-premium
+    'FA': 0.0, // Added FA based on sample if it means Fail and affects GPA
     'P': -1, // Pass, to be excluded from GPA calculation
-    'NP': -2 // Non-Pass, to be excluded from GPA calculation
+    'NP': -2, // Non-Pass, to be excluded from GPA calculation
+    // Grades like 'I' (Incomplete) or 'W' (Withdrawal) would also be < 0 if they don't affect GPA
 };
+
+// Keywords to identify major courses from "이수구분"
+const majorKeywords = ["전선", "전필", "전공선택", "전공필수", "학필"]; // "학필" for 학과필수 etc.
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed");
@@ -55,69 +63,111 @@ function handleFileUpload(event) {
 
 function parseCourseData(data) {
     allCourses = [];
-    // Assuming header row is present and specific column names.
-    // User might need to specify columns if format varies.
-    // For now, let's try to infer or ask.
-    // Simplified: Ask user to ensure columns are: 과목명, 학점, 성적
-    if (data.length < 2) {
-        alert("파일에 데이터가 충분하지 않습니다. 헤더 행과 하나 이상의 과목 데이터 행이 필요합니다.");
+feat/gpa-calculator-premium
+    let headerRowIndex = -1;
+    let actualDataStartIndex = -1;
+
+    // Find the header row. It should contain '교과목명', '학점', '등급'.
+    // The sample shows headers might not be on the first row.
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        if (row && row.includes('교과목명') && row.includes('학점') && row.includes('등급')) {
+            headerRowIndex = i;
+            actualDataStartIndex = i + 1;
+            break;
+        }
+    }
+
+    if (headerRowIndex === -1) {
+        alert("필수 컬럼명('교과목명', '학점', '등급')을 포함한 헤더 행을 찾을 수 없습니다. 업로드한 파일의 형식을 확인해주세요.");
         resetUI();
         return;
     }
 
-    // Let's assume a header row: e.g., data[0] = ["과목명", "학점", "성적", "전공여부"]
-    // And actual data starts from data[1]
-    // This part needs to be robust or configurable by the user.
-    // For this example, let's assume:
-    // Column 0: Course Name
-    // Column 1: Credits
-    // Column 2: Grade
-    // (Optional) Column 3: Major (e.g., 'Y' or '전공') - if not present, we use manual selection.
+feat/gpa-calculator-premium
+    const header = data[headerRowIndex].map(h => String(h).trim());
 
-    const header = data[0].map(h => String(h).trim());
-    // Try to find common names for columns
-    let nameCol = header.findIndex(h => ['과목명', '교과목명', 'Course Name'].includes(h));
-    let creditCol = header.findIndex(h => ['학점', '이수학점', 'Credits'].includes(h));
-    let gradeCol = header.findIndex(h => ['성적', '등급', 'Grade'].includes(h));
-    // Optional: let majorCol = header.findIndex(h => ['전공', '전공여부', 'Major'].includes(h));
+    // Get column indices based on specific names from the sample
+    let nameCol = header.indexOf('교과목명');
+    let creditCol = header.indexOf('학점');
+    let gradeCol = header.indexOf('등급');
+    let majorTypeCol = header.indexOf('이수구분'); // For "전선", "전필" etc.
+    let evaluationTypeCol = header.indexOf('평가방식'); // For "P/NP"
 
     if (nameCol === -1 || creditCol === -1 || gradeCol === -1) {
-        alert("필수 컬럼(과목명, 학점, 성적)을 파일에서 찾을 수 없습니다. 파일의 첫 번째 행에 해당 헤더가 있는지 확인해주세요.");
-        console.log("Detected headers:", header);
-        console.log("Found indices: Name:", nameCol, "Credits:", creditCol, "Grade:", gradeCol);
+        alert("필수 컬럼('교과목명', '학점', '등급') 중 일부를 헤더에서 찾을 수 없습니다. 파일 형식을 확인해주세요.");
+        console.log("Detected header:", header);
+        console.log(`Indices found: 교과목명-${nameCol}, 학점-${creditCol}, 등급-${gradeCol}`);
         resetUI();
         return;
     }
 
-    for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (row && row[nameCol] && row[creditCol] !== undefined && row[gradeCol]) {
-            const courseName = String(row[nameCol]).trim();
-            const credits = parseFloat(row[creditCol]);
-            const grade = String(row[gradeCol]).toUpperCase().trim();
+    // Check if data actually starts
+    if (data.length <= actualDataStartIndex) {
+        alert("헤더 행은 찾았으나, 실제 과목 데이터가 없습니다.");
+        resetUI();
+        return;
+    }
 
-            if (courseName && !isNaN(credits) && credits > 0 && gradePoints[grade] !== undefined) {
-                 allCourses.push({
-                    name: courseName,
-                    credits: credits,
-                    grade: grade,
-                    originalGrade: grade, // Keep original grade for retake reference
-                    isMajor: false // Default to false, will be set via UI
-                });
-            } else {
-                console.warn(`Skipping row ${i+1} due to invalid data: Name='${courseName}', Credits='${row[creditCol]}', Grade='${grade}'`);
+feat/gpa-calculator-premium
+
+    for (let i = actualDataStartIndex; i < data.length; i++) {
+        const row = data[i];
+        // Ensure row is not empty and has enough columns based on header
+        if (!row || row.length < Math.max(nameCol, creditCol, gradeCol) + 1 || !row[nameCol]) {
+            console.warn(`Skipping row ${i + 1} due to missing data or course name.`);
+            continue; // Skip empty or malformed rows
+        }
+
+        const courseName = String(row[nameCol]).trim();
+        const credits = parseFloat(row[creditCol]);
+        let grade = String(row[gradeCol]).toUpperCase().trim();
+        const majorType = majorTypeCol !== -1 && row[majorTypeCol] ? String(row[majorTypeCol]).trim() : "";
+        const evalType = evaluationTypeCol !== -1 && row[evaluationTypeCol] ? String(row[evaluationTypeCol]).trim() : "";
+
+        // If grade is empty or seems like a placeholder, skip (e.g. for courses in progress)
+        if (!grade) {
+            console.warn(`Skipping row ${i + 1} ('${courseName}') due to empty grade.`);
+            continue;
+        }
+
+        // Additional check for P/NP based on evalType if grade itself isn't P/NP
+        if (evalType.toUpperCase() === 'P/NP' && (grade === 'P' || grade === 'PASS')) {
+            grade = 'P';
+        } else if (evalType.toUpperCase() === 'P/NP' && (grade === 'NP' || grade === 'FAIL' || grade === 'NON-PASS')) {
+            grade = 'NP';
+        }
+
+
+        if (courseName && !isNaN(credits) && credits >= 0 && gradePoints[grade] !== undefined) { // Allow 0 credit courses for P/NP like KMOOC
+            let isMajor = false;
+            if (majorType) {
+                isMajor = majorKeywords.some(keyword => majorType.includes(keyword));
             }
+
+            allCourses.push({
+                name: courseName,
+                credits: credits,
+                grade: grade,
+                originalGrade: grade,
+                isMajor: isMajor,
+                majorType: majorType // Store for display if needed
+            });
+        } else {
+            console.warn(`Skipping row ${i + 1} ('${courseName}') due to invalid data: Credits='${row[creditCol]}', Grade='${grade}', GradePoint='${gradePoints[grade]}'`);
         }
     }
 
     if (allCourses.length === 0) {
-        alert("유효한 과목 데이터를 찾을 수 없습니다. 데이터 형식을 확인해주세요.");
+feat/gpa-calculator-premium
+        alert("파일에서 유효한 과목 데이터를 추출하지 못했습니다. 파일 내용과 형식을 다시 확인해주세요.");
         resetUI();
         return;
     }
 
     console.log("Parsed courses:", allCourses);
-    populateMajorSelectionUI(allCourses);
+feat/gpa-calculator-premium
+    populateMajorSelectionUI(allCourses); // This function will now use pre-checked majors
     document.getElementById('major-selection-section').style.display = 'block';
     document.getElementById('results-section').style.display = 'none';
     document.getElementById('retake-simulation-section').style.display = 'none';
@@ -151,11 +201,12 @@ function populateMajorSelectionUI(courses) {
         checkbox.type = 'checkbox';
         checkbox.id = `major-course-${index}`;
         checkbox.value = index; // Store course index
+feat/gpa-calculator-premium
+        checkbox.checked = course.isMajor; // Pre-check if auto-identified as major
 
         const label = document.createElement('label');
         label.htmlFor = `major-course-${index}`;
-        label.textContent = `${course.name} (${course.credits}학점, ${course.grade})`;
-
+        label.textContent = `${course.name} (${course.credits}학점, ${course.grade}) - 이수구분: ${course.majorType || 'N/A'}`;
         courseDiv.appendChild(checkbox);
         courseDiv.appendChild(label);
         courseListDiv.appendChild(courseDiv);
