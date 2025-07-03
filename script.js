@@ -3,7 +3,7 @@ let allCourses = [];
 // Global variable to store indices of selected major courses
 let majorCourseIndices = [];
 
-feat/gpa-calculator-premium
+
 // Grade to point mapping - updated to include FA
 const gradePoints = {
     'A+': 4.5, 'A': 4.5, 'A0': 4.0,
@@ -12,7 +12,7 @@ const gradePoints = {
     'C+': 2.5, 'C': 2.5, 'C0': 2.0,
     'D+': 1.5, 'D': 1.5, 'D0': 1.0,
     'F': 0.0,
-feat/gpa-calculator-premium
+
     'FA': 0.0, // Added FA based on sample if it means Fail and affects GPA
     'P': -1, // Pass, to be excluded from GPA calculation
     'NP': -2, // Non-Pass, to be excluded from GPA calculation
@@ -63,7 +63,7 @@ function handleFileUpload(event) {
 
 function parseCourseData(data) {
     allCourses = [];
-feat/gpa-calculator-premium
+
     let headerRowIndex = -1;
     let actualDataStartIndex = -1;
 
@@ -84,7 +84,7 @@ feat/gpa-calculator-premium
         return;
     }
 
-feat/gpa-calculator-premium
+
     const header = data[headerRowIndex].map(h => String(h).trim());
 
     // Get column indices based on specific names from the sample
@@ -109,7 +109,7 @@ feat/gpa-calculator-premium
         return;
     }
 
-feat/gpa-calculator-premium
+
 
     for (let i = actualDataStartIndex; i < data.length; i++) {
         const row = data[i];
@@ -159,14 +159,14 @@ feat/gpa-calculator-premium
     }
 
     if (allCourses.length === 0) {
-feat/gpa-calculator-premium
+
         alert("파일에서 유효한 과목 데이터를 추출하지 못했습니다. 파일 내용과 형식을 다시 확인해주세요.");
         resetUI();
         return;
     }
 
     console.log("Parsed courses:", allCourses);
-feat/gpa-calculator-premium
+
     populateMajorSelectionUI(allCourses); // This function will now use pre-checked majors
     document.getElementById('major-selection-section').style.display = 'block';
     document.getElementById('results-section').style.display = 'none';
@@ -201,7 +201,7 @@ function populateMajorSelectionUI(courses) {
         checkbox.type = 'checkbox';
         checkbox.id = `major-course-${index}`;
         checkbox.value = index; // Store course index
-feat/gpa-calculator-premium
+
         checkbox.checked = course.isMajor; // Pre-check if auto-identified as major
 
         const label = document.createElement('label');
