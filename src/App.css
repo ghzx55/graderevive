@@ -1,0 +1,135 @@
+/* Basic Reset */
+body, h1, h2, h3, p, ul, li, button, input, select {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #eef1f5;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+h1 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2em;
+}
+
+h2 {
+  color: #34495e;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 8px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-size: 1.6em;
+}
+
+section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: #fdfdfd;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+button {
+  display: inline-block;
+  margin: 10px 5px 10px 0;
+  padding: 10px 18px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+input[type="file"],
+input[type="text"],
+select {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+/* More specific styles will be added as components are built */
+
+.gpa-results p,
+.retake-results p {
+  font-size: 1.1em;
+  margin-bottom: 8px;
+}
+
+.gpa-results span,
+.retake-results span {
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.course-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.course-list th,
+.course-list td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.course-list th {
+  background-color: #f2f2f2;
+}
+
+.retake-selector {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.retake-selector select,
+.retake-selector input[type="text"] {
+  margin-right: 10px;
+}
+
+.premium-button {
+  background-color: #e67e22;
+}
+.premium-button:hover {
+  background-color: #d35400;
+}
+.premium-button:disabled {
+  background-color: #f39c12;
+  opacity: 0.8;
+}
