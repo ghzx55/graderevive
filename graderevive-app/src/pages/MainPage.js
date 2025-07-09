@@ -4,7 +4,9 @@ import CourseList from '../components/CourseList';
 import GpaDisplay from '../components/GpaDisplay';
 // import RetakeSimulator from '../components/RetakeSimulator';
 // import PremiumSection from '../components/PremiumSection';
-import './MainPage.css'; // 필요 시
+// import './MainPage.css'; // 필요 시
+import RetakeSimulationSection from "./RetakeSimulationSection";
+
 
 const gradePoints = {
   'A+': 4.5, 'A': 4.5, 'A0': 4.0,
@@ -104,7 +106,7 @@ function MainPage() {
 
   return (
     <div className="container">
-      <h1>React GPA 계산기 및 재수강 시뮬레이터</h1>
+      <h1>GPA 계산기 및 재수강 시뮬레이터</h1>
 
       <section id="file-upload-section">
         <h2>성적표 업로드 (XLSX)</h2>
@@ -128,8 +130,22 @@ function MainPage() {
             <GpaDisplay label="전공 총평점" gpa={majorGpa} />
           </section>
 
-          {/* 향후 구현할 RetakeSimulator */}
-          {/* <RetakeSimulator ... /> */}
+          <section id="retake-simulation-section">
+  <h2>재수강 시뮬레이션</h2>
+  <p style={{ fontSize: "14px", color: "#777" }}>
+    ※ 최대 2과목만 선택 가능 (프리미엄은 최대 5과목)
+  </p>
+
+  <RetakeSimulationSection
+    originalCourses={originalCourses}
+    isPremium={isPremiumUser}
+    onSimulate={handleRetakeSimulation}
+    onReset={resetRetakeSimulation}
+    retakeOverallGpa={retakeOverallGpa}
+    retakeMajorGpa={retakeMajorGpa}
+    isRetakeCalculated={isRetakeCalculated}
+  />
+</section>
 
           <section id="premium-feature-section">
             <h2>프리미엄 기능</h2>
