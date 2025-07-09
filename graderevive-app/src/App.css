@@ -133,3 +133,10 @@ select {
   background-color: #f39c12;
   opacity: 0.8;
 }
+/* src/App.css */
+
+.nav-bar {
+  background-color: #f8f8f8;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
